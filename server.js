@@ -16,7 +16,8 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: "https://quiz-system-alpha-gilt.vercel.app",
+    origin: true,
+    credentials: true,
   }),
 );
 app.use(express.json());
