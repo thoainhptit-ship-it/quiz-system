@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Quiz - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen">
+    <nav class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-2">
+            <span class="text-2xl">⚡</span>
+            <span class="font-black text-xl text-indigo-600 tracking-wider">QUIZ APP</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <span id="welcome_name" class="font-semibold text-slate-700">Xin chào</span>
+            <button onclick="logout()" class="text-sm font-bold text-red-500 hover:text-red-600 bg-red-50 px-3 py-1.5 rounded-xl transition">Đăng xuất</button>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-black text-slate-800">Bạn muốn làm gì hôm nay?</h2>
+            <p class="text-slate-500 mt-2">Chọn một trong hai tác vụ chính bên dưới để bắt đầu</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center transition-all hover:shadow-md hover:border-indigo-300">
+                <div class="text-4xl mb-4">🛠️</div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Tạo Đề Thi Mới</h3>
+                <p class="text-slate-500 text-sm mb-6">Soạn bộ câu hỏi, cấu hình mật khẩu cá nhân và xuất bản mã đề thi.</p>
+                <a href="create-quiz.html" class="inline-block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition">Bắt đầu tạo đề</a>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center transition-all hover:shadow-md hover:border-emerald-300">
+                <div class="text-4xl mb-4">✍️</div>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Vào Làm Đề Người Khác</h3>
+                <p class="text-slate-500 text-sm mb-6">Nhập chính xác mã đề thi và mật khẩu phòng thi được chia sẻ để làm bài.</p>
+                <a href="enter-quiz.html" class="inline-block w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition">Vào phòng thi</a>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    if(!user) window.location.href = "login.html";
+    else document.getElementById("welcome_name").innerText = "Xin chào, " + user.name;
+
+    function logout() {
+        localStorage.clear(); window.location.href = "login.html";
+    }
+</script>
+</body>
+</html>

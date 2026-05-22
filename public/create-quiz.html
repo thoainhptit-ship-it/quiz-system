@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo đề thi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen text-slate-800">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="mb-6"><a href="dashboard.html" class="text-sm font-bold text-indigo-600 hover:underline">← Quay lại Dashboard</a></div>
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-extrabold text-indigo-600">🛠️ THIẾT KẾ ĐỀ THI MỚI</h1>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+            <h2 class="text-lg font-bold text-slate-700 mb-4 border-b pb-2">📋 Thông tin chung</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Tên đề thi *</label>
+                    <input type="text" id="title" placeholder="Kiểm tra trắc nghiệm Lý thuyết" class="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Mật khẩu phòng (Password) *</label>
+                    <input type="text" id="quiz_password" placeholder="Đặt mật khẩu phòng" class="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Mô tả ngắn</label>
+                    <textarea id="description" rows="2" placeholder="Nội dung hướng dẫn hoặc ghi chú đề thi..." class="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-600 mb-1">Thời gian làm bài (Phút) *</label>
+                    <input type="number" id="time_limit" placeholder="Ví dụ: 15, 45" class="w-full px-4 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                </div>
+            </div>
+        </div>
+
+        <div id="questionsContainer" class="space-y-6"></div>
+
+        <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <button onclick="addQuestion()" class="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition flex items-center justify-center gap-2">➕ Thêm câu hỏi</button>
+            <button onclick="submitQuiz()" class="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition flex items-center justify-center gap-2">🚀 Hoàn tất & Xuất bản</button>
+        </div>
+    </div>
+
+<script>
+let questionCount = 0;
+function addQuestion(){
+    questionCount++;
+    const html = `
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 question-box">
+            <div class="flex justify-between items-center border-b pb-2 mb-4">
+                <h3 class="text-md font-bold text-indigo-600">Câu ${questionCount}</h3>
+                <span class="text-xs text-amber-600 font-medium">Tích chọn nút tròn để làm đáp án đúng</span>
+            </div>
+            <div class="mb-4">
+                <input type="text" class="question w-full px-4 py-2 rounded-xl border border-slate-300 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Nhập nội dung câu hỏi...">
+            </div>
+            <div class="space-y-2">
+                ${['A', 'B', 'C', 'D'].map((label, idx) => `
+                    <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl border border-slate-200">
+                        <input type="radio" name="correct${questionCount}" value="${idx}" class="w-4 h-4 text-indigo-600">
+                        <span class="font-bold text-slate-500">${label}.</span>
+                        <input type="text" class="option flex-1 bg-transparent border-none outline-none text-sm text-slate-700" placeholder="Nội dung phương án">
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    document.getElementById("questionsContainer").insertAdjacentHTML("beforeend", html);
+}
+
+async function submitQuiz(){
+    const title = document.getElementById("title").value;
+    const description = document.getElementById("description").value;
+    const time_limit = document.getElementById("time_limit").value;
+    const quiz_password = document.getElementById("quiz_password").value;
+    const questionBoxes = document.querySelectorAll(".question-box");
+
+    if(!title || !quiz_password || questionBoxes.length === 0) { alert("Vui lòng nhập đầy đủ thông tin đề và câu hỏi!"); return; }
+
+    let questions = []; let isValid = true;
+    questionBoxes.forEach((box, index) => {
+        const questionText = box.querySelector(".question").value;
+        const optionInputs = box.querySelectorAll(".option");
+        const correctAnswer = box.querySelector(`input[name="correct${index+1}"]:checked`)?.value;
+
+        let options = []; optionInputs.forEach(opt => options.push(opt.value));
+        if(!questionText || correctAnswer === undefined) isValid = false;
+
+        questions.push({ question: questionText, options: options, correctAnswer: parseInt(correctAnswer) });
+    });
+
+    if(!isValid) { alert("Lỗi: Kiểm tra lại xem có câu hỏi nào bỏ trống hoặc chưa chọn đáp án đúng không!"); return; }
+
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://localhost:3000/api/quiz/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify({ title, description, time_limit, quiz_password, questions })
+    });
+    const result = await res.json();
+    if(res.ok) alert(`Tạo thành công! MÃ PHÒNG: ${result.quizCode}`);
+    else alert(result.message);
+}
+</script>
+</body>
+</html>

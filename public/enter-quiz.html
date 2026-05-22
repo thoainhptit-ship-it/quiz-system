@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vào phòng thi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-indigo-500 to-purple-600 min-h-screen flex items-center justify-center p-4 font-sans">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8">
+        <div class="mb-4"><a href="dashboard.html" class="text-xs font-bold text-indigo-600 hover:underline">← Về Dashboard</a></div>
+        <div class="text-center mb-6">
+            <h1 class="text-xl font-extrabold text-slate-800">Nhập Khóa Phòng Thi</h1>
+            <p class="text-slate-400 text-sm mt-1">Điền Mã đề và Mật khẩu để bắt đầu làm bài</p>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Mã đề thi (Quiz Code)</label>
+                <input type="text" id="quiz_code" placeholder="Ví dụ: MS-1234" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 font-bold text-slate-700 tracking-wide uppercase placeholder:normal-case focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Mật khẩu phòng (Password)</label>
+                <input type="password" id="quiz_password" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+
+            <button onclick="joinQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition duration-150 shadow-md">
+                Bắt Đầu Làm Bài
+            </button>
+        </div>
+    </div>
+
+<script>
+async function joinQuiz(){
+    const quiz_code = document.getElementById("quiz_code").value.trim();
+    const quiz_password = document.getElementById("quiz_password").value.trim();
+
+    if(!quiz_code || !quiz_password) { alert("Vui lòng nhập đầy đủ khóa phòng!"); return; }
+
+    const res = await fetch("http://localhost:3000/api/quiz/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quiz_code, quiz_password })
+    });
+    const result = await res.json();
+    if(result.success){
+        localStorage.setItem("quizData", JSON.stringify(result.quiz));
+        window.location.href = "take-quiz.html";
+    } else {
+        alert(result.message);
+    }
+}
+</script>
+</body>
+</html>

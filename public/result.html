@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Kết quả</title>
+
+<style>
+
+.correct{
+    background:lightgreen;
+}
+
+.wrong{
+    background:#ffb3b3;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Kết quả bài thi</h1>
+
+<h2 id="score"></h2>
+
+<div id="reviewContainer"></div>
+
+<script>
+
+const result =
+    JSON.parse(
+        localStorage.getItem(
+            "quizResult"
+        )
+    );
+
+const quiz =
+    JSON.parse(
+        localStorage.getItem(
+            "quizData"
+        )
+    );
+
+document.getElementById("score")
+.innerText =
+
+`Đúng ${result.correct}/${result.total}
+- Điểm ${result.score}`;
+
+const container =
+    document.getElementById(
+        "reviewContainer"
+    );
+
+quiz.questions.forEach((q,index)=>{
+
+    const review =
+        result.reviewData.find(
+            r => r.question_id == q.id
+        );
+
+    let html = `
+
+        <div>
+
+            <h3>
+                Câu ${index+1}:
+                ${q.question}
+            </h3>
+
+    `;
+
+    q.options.forEach((opt)=>{
+
+        let className = "";
+
+        if(
+            opt.id ==
+            review.correct_option_id
+        ){
+            className = "correct";
+        }
+
+        if(
+            opt.id ==
+            review.selected_option_id &&
+            !review.isCorrect
+        ){
+            className = "wrong";
+        }
+
+        html += `
+
+            <div class="${className}">
+                ${opt.option_text}
+            </div>
+
+        `;
+
+    });
+
+    html += "</div><hr>";
+
+    container.insertAdjacentHTML(
+        "beforeend",
+        html
+    );
+
+});
+
+</script>
+
+</body>
+
+</html>

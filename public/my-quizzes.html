@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Đề đã tạo</title>
+</head>
+
+<body>
+
+<h1>Danh sách đề đã tạo</h1>
+
+<div id="quizList"></div>
+
+<script>
+
+async function loadQuizzes(){
+
+    const token =
+        localStorage.getItem(
+            "token"
+        );
+
+    const res = await fetch(
+        "http://localhost:3000/api/quiz/my-quizzes",
+        {
+            headers:{
+                "Authorization":
+                "Bearer " + token
+            }
+        }
+    );
+
+    const data = await res.json();
+
+    const list =
+        document.getElementById(
+            "quizList"
+        );
+
+    data.forEach((q)=>{
+
+        list.innerHTML += `
+
+            <div>
+
+                <h3>
+                    ${q.title}
+                </h3>
+
+                <p>
+                    Mã đề:
+                    ${q.quiz_code}
+                </p>
+
+                <button
+                    onclick="
+                    viewResults(${q.id})
+                    "
+                >
+                    Xem kết quả
+                </button>
+
+                <hr>
+
+            </div>
+
+        `;
+
+    });
+
+}
+
+function viewResults(id){
+
+    localStorage.setItem(
+        "selectedQuizId",
+        id
+    );
+
+    window.location.href =
+        "creator-results.html";
+
+}
+
+loadQuizzes();
+
+</script>
+
+</body>
+
+</html>

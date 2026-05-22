@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Thống kê kết quả</title>
+</head>
+
+<body>
+
+<h1>Lịch sử làm bài</h1>
+
+<table border="1">
+
+<thead>
+
+<tr>
+
+<th>Tên</th>
+
+<th>Số câu đúng</th>
+
+<th>Điểm</th>
+
+<th>Thời gian nộp</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+<script>
+
+async function loadResults(){
+
+    const quizId =
+        localStorage.getItem(
+            "selectedQuizId"
+        );
+
+    const token =
+        localStorage.getItem(
+            "token"
+        );
+
+    const res = await fetch(
+
+        `http://localhost:3000/api/quiz/results/${quizId}`,
+
+        {
+            headers:{
+                "Authorization":
+                "Bearer " + token
+            }
+        }
+
+    );
+
+    const data = await res.json();
+
+    const table =
+        document.getElementById(
+            "tableBody"
+        );
+
+    data.forEach((r)=>{
+
+        table.innerHTML += `
+
+            <tr>
+
+                <td>
+                    ${r.display_name}
+                </td>
+
+                <td>
+                    ${r.correct_answers}
+                    /
+                    ${r.total_questions}
+                </td>
+
+                <td>
+                    ${r.score}
+                </td>
+
+                <td>
+                    ${r.submitted_at}
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+}
+
+loadResults();
+
+</script>
+
+</body>
+
+</html>
