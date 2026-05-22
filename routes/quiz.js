@@ -6,11 +6,14 @@ const authMiddleware = require("../middleware/authMiddleware");
 // 1. TẠO ĐỀ THI
 router.post("/create", authMiddleware, async (req, res) => {
   try {
-    const { title, description, time_limit, quiz_password, questions } = req.body;
+    const { title, description, time_limit, quiz_password, questions } =
+      req.body;
     const creator_id = req.user.id;
 
     if (!title || !quiz_password || !questions || questions.length === 0) {
-      return res.status(400).json({ message: "Vui lòng điền đầy đủ thông tin và câu hỏi." });
+      return res
+        .status(400)
+        .json({ message: "Vui lòng điền đầy đủ thông tin và câu hỏi." });
     }
 
     const quizCode = "MS-" + Math.floor(1000 + Math.random() * 9000);
@@ -19,16 +22,28 @@ router.post("/create", authMiddleware, async (req, res) => {
       INSERT INTO quizzes (creator_id, title, description, quiz_password, time_limit, quiz_code)
       VALUES (?, ?, ?, ?, ?, ?)
     `;
-    const [quizResult] = await db.execute(sqlQuiz, [creator_id, title, description, quiz_password, time_limit, quizCode]);
+    const [quizResult] = await db.execute(sqlQuiz, [
+      creator_id,
+      title,
+      description,
+      quiz_password,
+      time_limit,
+      quizCode,
+    ]);
     const quiz_id = quizResult.insertId;
 
     for (const q of questions) {
       if (q.correctAnswer === undefined || q.correctAnswer === null) {
-        return res.status(400).json({ message: "Mọi câu hỏi đều phải chọn một đáp án đúng!" });
+        return res
+          .status(400)
+          .json({ message: "Mọi câu hỏi đều phải chọn một đáp án đúng!" });
       }
 
       const sqlQuestion = `INSERT INTO questions (quiz_id, question_text) VALUES (?, ?)`;
-      const [questionResult] = await db.execute(sqlQuestion, [quiz_id, q.question]);
+      const [questionResult] = await db.execute(sqlQuestion, [
+        quiz_id,
+        q.question,
+      ]);
       const question_id = questionResult.insertId;
 
       for (let index = 0; index < q.options.length; index++) {
@@ -61,7 +76,10 @@ router.post("/join", async (req, res) => {
     const quiz = quizResult[0];
 
     if (quiz.quiz_password !== quiz_password) {
-      return res.json({ success: false, message: "Mật khẩu phòng thi không chính xác!" });
+      return res.json({
+        success: false,
+        message: "Mật khẩu phòng thi không chính xác!",
+      });
     }
 
     const sqlQuestions = `SELECT id, question_text FROM questions WHERE quiz_id = ?`;
@@ -75,7 +93,7 @@ router.post("/join", async (req, res) => {
       questions.push({
         id: q.id,
         question: q.question_text,
-        options: optionResult
+        options: optionResult,
       });
     }
 
@@ -86,8 +104,8 @@ router.post("/join", async (req, res) => {
         title: quiz.title,
         description: quiz.description,
         time_limit: quiz.time_limit,
-        questions
-      }
+        questions,
+      },
     });
   } catch (err) {
     console.error(err);
@@ -108,25 +126,35 @@ router.post("/submit", authMiddleware, async (req, res) => {
     let correctCount = 0;
     const reviewData = [];
 
-    // Tối ưu hiệu năng: Lấy tất cả đáp án đúng của các câu hỏi trong đề này cùng lúc
-    const questionIds = answers.map(a => a.question_id);
+    const questionIds = answers.map((a) => a.question_id);
+
+    if (questionIds.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Không có câu hỏi nào được trả lời." });
+    }
+
+    // Tối ưu hiệu năng: Lấy tất cả đáp án đúng cùng lúc
     const [allOptions] = await db.query(
       `SELECT id, question_id, is_correct FROM options WHERE question_id IN (?)`,
-      [questionIds]
+      [questionIds],
     );
 
     for (const a of answers) {
-      const currentQuestionOptions = allOptions.filter(o => o.question_id == a.question_id);
-      const correctOption = currentQuestionOptions.find(o => o.is_correct);
-      
-      const isCorrect = correctOption && correctOption.id == a.selected_option_id;
+      const currentQuestionOptions = allOptions.filter(
+        (o) => o.question_id == a.question_id,
+      );
+      const correctOption = currentQuestionOptions.find((o) => o.is_correct);
+
+      const isCorrect =
+        correctOption && correctOption.id == a.selected_option_id;
       if (isCorrect) correctCount++;
 
       reviewData.push({
         question_id: a.question_id,
         selected_option_id: a.selected_option_id,
         correct_option_id: correctOption ? correctOption.id : null,
-        isCorrect
+        isCorrect,
       });
     }
 
@@ -137,13 +165,19 @@ router.post("/submit", authMiddleware, async (req, res) => {
       INSERT INTO results (user_id, quiz_id, correct_answers, total_questions, score)
       VALUES (?, ?, ?, ?, ?)
     `;
-    await db.execute(sqlResult, [user_id, quiz_id, correctCount, total, finalScore]);
+    await db.execute(sqlResult, [
+      user_id,
+      quiz_id,
+      correctCount,
+      total,
+      finalScore,
+    ]);
 
     res.json({
       score: finalScore,
       correct: correctCount,
       total,
-      reviewData
+      reviewData,
     });
   } catch (err) {
     console.error(err);

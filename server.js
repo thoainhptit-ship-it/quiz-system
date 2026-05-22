@@ -1,8 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config(); // Tải biến môi trường từ file .env
 
 const authRoutes = require("./routes/auth");
+// Đảm bảo đường dẫn này trỏ đến file routes/quiz.js bạn đã sửa
 const quizRoutes = require("./routes/quiz");
 
 const app = express();
@@ -29,5 +30,13 @@ app.use("/api/quiz", quizRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server chạy tại http://localhost:${PORT}`);
+  console.log("-----------------------------------------");
+  console.log(`🚀 Server đang chạy tại: http://localhost:${PORT}`);
+  console.log("-----------------------------------------");
+});
+
+// Xử lý lỗi tập trung để tránh server bị crash
+app.use((err, req, res, next) => {
+  console.error("🔥 Lỗi hệ thống:", err.stack);
+  res.status(500).json({ message: "Đã xảy ra lỗi nội bộ trên server!" });
 });
