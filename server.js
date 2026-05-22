@@ -14,7 +14,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://LINK_VERCEL_CỦA_BẠN.vercel.app",
+  }),
+);
 app.use(express.json());
 app.use(express.static("public"));
 
