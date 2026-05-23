@@ -1,45 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
-<head>
+  <head>
     <title>Đề đã tạo</title>
-</head>
+  </head>
 
-<body>
+  <body>
+    <h1>Danh sách đề đã tạo</h1>
 
-<h1>Danh sách đề đã tạo</h1>
+    <div id="quizList"></div>
 
-<div id="quizList"></div>
+    <script>
+      async function loadQuizzes() {
+        const token = localStorage.getItem("token");
 
-<script>
-
-async function loadQuizzes(){
-
-    const token =
-        localStorage.getItem(
-            "token"
+        const res = await fetch(
+          "https://quiz-backend-svt8.onrender.com/api/quiz/my-quizzes",
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          },
         );
 
-    const res = await fetch(
-        "http://localhost:3000/api/quiz/my-quizzes",
-        {
-            headers:{
-                "Authorization":
-                "Bearer " + token
-            }
-        }
-    );
+        const data = await res.json();
 
-    const data = await res.json();
+        const list = document.getElementById("quizList");
 
-    const list =
-        document.getElementById(
-            "quizList"
-        );
-
-    data.forEach((q)=>{
-
-        list.innerHTML += `
+        data.forEach((q) => {
+          list.innerHTML += `
 
             <div>
 
@@ -65,27 +53,16 @@ async function loadQuizzes(){
             </div>
 
         `;
+        });
+      }
 
-    });
+      function viewResults(id) {
+        localStorage.setItem("selectedQuizId", id);
 
-}
+        window.location.href = "creator-results.html";
+      }
 
-function viewResults(id){
-
-    localStorage.setItem(
-        "selectedQuizId",
-        id
-    );
-
-    window.location.href =
-        "creator-results.html";
-
-}
-
-loadQuizzes();
-
-</script>
-
-</body>
-
+      loadQuizzes();
+    </script>
+  </body>
 </html>

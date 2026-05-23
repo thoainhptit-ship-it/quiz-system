@@ -1,73 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
-<head>
+  <head>
     <title>Thống kê kết quả</title>
-</head>
+  </head>
 
-<body>
+  <body>
+    <h1>Lịch sử làm bài</h1>
 
-<h1>Lịch sử làm bài</h1>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Tên</th>
 
-<table border="1">
+          <th>Số câu đúng</th>
 
-<thead>
+          <th>Điểm</th>
 
-<tr>
+          <th>Thời gian nộp</th>
+        </tr>
+      </thead>
 
-<th>Tên</th>
+      <tbody id="tableBody"></tbody>
+    </table>
 
-<th>Số câu đúng</th>
+    <script>
+      async function loadResults() {
+        const quizId = localStorage.getItem("selectedQuizId");
 
-<th>Điểm</th>
+        const token = localStorage.getItem("token");
 
-<th>Thời gian nộp</th>
+        const res = await fetch(
+          `https://quiz-backend-svt8.onrender.com/api/quiz/results/${quizId}`,
 
-</tr>
-
-</thead>
-
-<tbody id="tableBody"></tbody>
-
-</table>
-
-<script>
-
-async function loadResults(){
-
-    const quizId =
-        localStorage.getItem(
-            "selectedQuizId"
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          },
         );
 
-    const token =
-        localStorage.getItem(
-            "token"
-        );
+        const data = await res.json();
 
-    const res = await fetch(
+        const table = document.getElementById("tableBody");
 
-        `http://localhost:3000/api/quiz/results/${quizId}`,
-
-        {
-            headers:{
-                "Authorization":
-                "Bearer " + token
-            }
-        }
-
-    );
-
-    const data = await res.json();
-
-    const table =
-        document.getElementById(
-            "tableBody"
-        );
-
-    data.forEach((r)=>{
-
-        table.innerHTML += `
+        data.forEach((r) => {
+          table.innerHTML += `
 
             <tr>
 
@@ -92,15 +69,10 @@ async function loadResults(){
             </tr>
 
         `;
+        });
+      }
 
-    });
-
-}
-
-loadResults();
-
-</script>
-
-</body>
-
+      loadResults();
+    </script>
+  </body>
 </html>
