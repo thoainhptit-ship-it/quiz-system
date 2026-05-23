@@ -1,60 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đăng nhập</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gradient-to-br from-indigo-500 to-purple-600 min-h-screen flex items-center justify-center p-4 font-sans">
+  </head>
+  <body
+    class="bg-gradient-to-br from-indigo-500 to-purple-600 min-h-screen flex items-center justify-center p-4 font-sans"
+  >
     <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8">
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-extrabold text-slate-800">Chào Mừng Trở Lại</h1>
-            <p class="text-slate-400 text-sm mt-1">Đăng nhập để vào hệ thống phòng thi</p>
-        </div>
-
-        <div class="space-y-4">
-            <div>
-                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Email</label>
-                <input type="email" id="email" placeholder="name@example.com" 
-                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-            </div>
-            <div>
-                <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Mật khẩu</label>
-                <input type="password" id="password" placeholder="••••••••" 
-                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-            </div>
-
-            <button onclick="handleLogin()" 
-                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition duration-150 shadow-lg shadow-indigo-100 mt-2">
-                Đăng Nhập
-            </button>
-        </div>
-
-        <p class="text-center text-sm text-slate-500 mt-6">
-            Chưa có tài khoản? <a href="register.html" class="text-indigo-600 font-semibold hover:underline">Đăng ký ngay</a>
+      <div class="text-center mb-6">
+        <h1 class="text-2xl font-extrabold text-slate-800">
+          Chào Mừng Trở Lại
+        </h1>
+        <p class="text-slate-400 text-sm mt-1">
+          Đăng nhập để vào hệ thống phòng thi
         </p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1"
+            >Email</label
+          >
+          <input
+            type="email"
+            id="email"
+            placeholder="name@example.com"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          />
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-500 mb-1"
+            >Mật khẩu</label
+          >
+          <input
+            type="password"
+            id="password"
+            placeholder="••••••••"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          />
+        </div>
+
+        <button
+          onclick="handleLogin()"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition duration-150 shadow-lg shadow-indigo-100 mt-2"
+        >
+          Đăng Nhập
+        </button>
+      </div>
+
+      <p class="text-center text-sm text-slate-500 mt-6">
+        Chưa có tài khoản?
+        <a
+          href="register.html"
+          class="text-indigo-600 font-semibold hover:underline"
+          >Đăng ký ngay</a
+        >
+      </p>
     </div>
 
-<script>
-async function handleLogin() {
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    <script>
+      async function handleLogin() {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
 
-    const res = await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
-    const result = await res.json();
-    if(res.ok) {
-        localStorage.setItem("token", result.token);
-        localStorage.setItem("user", JSON.stringify(result.user));
-        window.location.href = "dashboard.html";
-    } else {
-        alert(result.message);
-    }
-}
-</script>
-</body>
+        const res = await fetch(
+          "https://quiz-backend-svt8.onrender.com/api/auth/login",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          },
+        );
+        const result = await res.json();
+        if (res.ok) {
+          localStorage.setItem("token", result.token);
+          localStorage.setItem("user", JSON.stringify(result.user));
+          window.location.href = "dashboard.html";
+        } else {
+          alert(result.message);
+        }
+      }
+    </script>
+  </body>
 </html>
