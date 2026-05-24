@@ -17,11 +17,11 @@ router.post("/register", async (req, res) => {
         .json({ message: "Vui lòng nhập đầy đủ thông tin" });
     }
 
-    const [existing] = await db.execute(`SELECT * FROM users WHERE email = ?`, [
+    const existing = await db.query(`SELECT * FROM users WHERE email = $1`, [
       email,
     ]);
 
-    if (existing.length > 0) {
+    if (existing.rows.length > 0) {
       return res.json({
         message: "Email đã tồn tại",
       });
@@ -29,7 +29,7 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await db.execute(
+    await db.query(
       `
             INSERT INTO users
             (
@@ -37,7 +37,7 @@ router.post("/register", async (req, res) => {
                 password,
                 display_name
             )
-            VALUES (?, ?, ?)
+            VALUES ($1, $2, $3)
             `,
       [email, hashedPassword, display_name],
     );
@@ -63,17 +63,17 @@ router.post("/login", async (req, res) => {
         .json({ message: "Vui lòng nhập đầy đủ email và mật khẩu" });
     }
 
-    const [users] = await db.execute(`SELECT * FROM users WHERE email = ?`, [
+    const userResult = await db.query(`SELECT * FROM users WHERE email = $1`, [
       email,
     ]);
 
-    if (users.length === 0) {
+    if (userResult.rows.length === 0) {
       return res.json({
         message: "Sai email",
       });
     }
 
-    const user = users[0];
+    const user = userResult.rows[0];
 
     const isMatch = await bcrypt.compare(password, user.password);
 

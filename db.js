@@ -1,25 +1,20 @@
-const mysql = require("mysql2");
+require("dotenv").config();
 
-// Tạo Pool kết nối
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+const { Pool } = require("pg");
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false,
+    },
 });
 
-// Kiểm tra kết nối ngay khi khởi động
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error("❌ Lỗi kết nối Database:", err.message);
-  } else {
-    console.log("✅ Kết nối MySQL (freedb) thành công!");
-    connection.release();
-  }
-});
+pool.connect()
+    .then(() => {
+        console.log("✅ Kết nối Supabase PostgreSQL thành công!");
+    })
+    .catch((err) => {
+        console.log("❌ Lỗi kết nối DB:", err.message);
+    });
 
-module.exports = pool.promise();
+module.exports = pool;

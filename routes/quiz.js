@@ -20,9 +20,9 @@ router.post("/create", authMiddleware, async (req, res) => {
 
     const sqlQuiz = `
       INSERT INTO quizzes (creator_id, title, description, quiz_password, time_limit, quiz_code)
-      VALUES (?, ?, ?, ?, ?, ?)
+      VALUES ($1, $2, $3, $4, $5, $6) RETURNING id
     `;
-    const [quizResult] = await db.execute(sqlQuiz, [
+    const quizResult = await db.query(sqlQuiz, [
       creator_id,
       title,
       description,
@@ -30,7 +30,7 @@ router.post("/create", authMiddleware, async (req, res) => {
       time_limit,
       quizCode,
     ]);
-    const quiz_id = quizResult.insertId;
+    const quiz_id = quizResult.rows[0].id;
 
     for (const q of questions) {
       if (q.correctAnswer === undefined || q.correctAnswer === null) {
@@ -39,18 +39,15 @@ router.post("/create", authMiddleware, async (req, res) => {
           .json({ message: "Mọi câu hỏi đều phải chọn một đáp án đúng!" });
       }
 
-      const sqlQuestion = `INSERT INTO questions (quiz_id, question_text) VALUES (?, ?)`;
-      const [questionResult] = await db.execute(sqlQuestion, [
-        quiz_id,
-        q.question,
-      ]);
-      const question_id = questionResult.insertId;
+      const sqlQuestion = `INSERT INTO questions (quiz_id, question_text) VALUES ($1, $2) RETURNING id`;
+      const questionResult = await db.query(sqlQuestion, [quiz_id, q.question]);
+      const question_id = questionResult.rows[0].id;
 
       for (let index = 0; index < q.options.length; index++) {
         const opt = q.options[index];
         const isCorrect = index == q.correctAnswer;
-        const sqlOption = `INSERT INTO options (question_id, option_text, is_correct) VALUES (?, ?, ?)`;
-        await db.execute(sqlOption, [question_id, opt, isCorrect]);
+        const sqlOption = `INSERT INTO options (question_id, option_text, is_correct) VALUES ($1, $2, $3)`;
+        await db.query(sqlOption, [question_id, opt, isCorrect]);
       }
     }
 
@@ -66,14 +63,14 @@ router.post("/join", async (req, res) => {
   try {
     const { quiz_code, quiz_password } = req.body;
 
-    const sqlQuiz = `SELECT * FROM quizzes WHERE quiz_code = ?`;
-    const [quizResult] = await db.execute(sqlQuiz, [quiz_code]);
+    const sqlQuiz = `SELECT * FROM quizzes WHERE quiz_code = $1`;
+    const quizResult = await db.query(sqlQuiz, [quiz_code]);
 
-    if (quizResult.length === 0) {
+    if (quizResult.rows.length === 0) {
       return res.json({ success: false, message: "Không tìm thấy mã đề này!" });
     }
 
-    const quiz = quizResult[0];
+    const quiz = quizResult.rows[0];
 
     if (quiz.quiz_password !== quiz_password) {
       return res.json({
@@ -82,18 +79,18 @@ router.post("/join", async (req, res) => {
       });
     }
 
-    const sqlQuestions = `SELECT id, question_text FROM questions WHERE quiz_id = ?`;
-    const [questionResult] = await db.execute(sqlQuestions, [quiz.id]);
+    const sqlQuestions = `SELECT id, question_text FROM questions WHERE quiz_id = $1`;
+    const questionResult = await db.query(sqlQuestions, [quiz.id]);
 
     let questions = [];
-    for (const q of questionResult) {
+    for (const q of questionResult.rows) {
       // CHỈ lấy id và option_text, tuyệt đối không lấy cột is_correct ở đây
-      const sqlOptions = `SELECT id, option_text FROM options WHERE question_id = ?`;
-      const [optionResult] = await db.execute(sqlOptions, [q.id]);
+      const sqlOptions = `SELECT id, option_text FROM options WHERE question_id = $1`;
+      const optionResult = await db.query(sqlOptions, [q.id]);
       questions.push({
         id: q.id,
         question: q.question_text,
-        options: optionResult,
+        options: optionResult.rows,
       });
     }
 
@@ -135,10 +132,11 @@ router.post("/submit", authMiddleware, async (req, res) => {
     }
 
     // Tối ưu hiệu năng: Lấy tất cả đáp án đúng cùng lúc
-    const [allOptions] = await db.query(
-      `SELECT id, question_id, is_correct FROM options WHERE question_id IN (?)`,
+    const allOptionsResult = await db.query(
+      `SELECT id, question_id, is_correct FROM options WHERE question_id = ANY($1)`,
       [questionIds],
     );
+    const allOptions = allOptionsResult.rows;
 
     for (const a of answers) {
       const currentQuestionOptions = allOptions.filter(
@@ -163,9 +161,9 @@ router.post("/submit", authMiddleware, async (req, res) => {
 
     const sqlResult = `
       INSERT INTO results (user_id, quiz_id, correct_answers, total_questions, score)
-      VALUES (?, ?, ?, ?, ?)
+      VALUES ($1, $2, $3, $4, $5)
     `;
-    await db.execute(sqlResult, [
+    await db.query(sqlResult, [
       user_id,
       quiz_id,
       correctCount,
