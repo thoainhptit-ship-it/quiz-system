@@ -183,4 +183,41 @@ router.post("/submit", authMiddleware, async (req, res) => {
   }
 });
 
+// 4. LẤY DANH SÁCH ĐỀ CỦA TÔI
+router.get("/my-quizzes", authMiddleware, async (req, res) => {
+  try {
+    const creator_id = req.user.id;
+    const result = await db.query(
+      `SELECT * FROM quizzes 
+       WHERE creator_id = $1 
+       ORDER BY created_at DESC`,
+      [creator_id],
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
+});
+
+// 5. LẤY KẾT QUẢ CỦA MỘT ĐỀ THI
+router.get("/results/:quizId", authMiddleware, async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    // Join với bảng users để lấy tên người làm bài
+    const result = await db.query(
+      `SELECT r.*, u.display_name 
+       FROM results r
+       JOIN users u ON r.user_id = u.id
+       WHERE r.quiz_id = $1
+       ORDER BY r.submitted_at DESC`,
+      [quizId],
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
+});
+
 module.exports = router;
