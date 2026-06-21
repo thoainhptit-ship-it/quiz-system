@@ -58,7 +58,7 @@ router.post("/create", authMiddleware, async (req, res) => {
   }
 });
 
-// 2. VÀO PHÒNG THI (ĐÃ VÁ LỖI BẢO MẬT ĐÁP ÁN)
+// 2. VÀO PHÒNG THI 
 router.post("/join", async (req, res) => {
   try {
     const { quiz_code, quiz_password } = req.body;
