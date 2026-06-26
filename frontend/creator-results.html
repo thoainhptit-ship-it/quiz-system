@@ -1,46 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thống kê kết quả - Quiz App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 font-sans min-h-screen text-slate-800">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thống kê kết quả — Quiz App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="theme.css" />
+  </head>
+  <body>
+    <div class="shell shell--wide" style="padding-top: 40px; padding-bottom: 60px;">
+      <a href="my-quizzes.html" class="back-link">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 12H5" /><path d="M12 19l-7-7 7-7" /></svg>
+        Trở lại kho đề thi đã tạo
+      </a>
 
-    <div class="max-w-5xl mx-auto px-4 py-8">
-        <div class="mb-6">
-            <a href="my-quizzes.html" class="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 transition">
-                <span>←</span> Trở lại kho đề thi đã tạo
-            </a>
-        </div>
+      <div class="page-head">
+        <span class="eyebrow">Báo cáo</span>
+        <h1>Kết quả phòng thi</h1>
+        <p>Danh sách học viên đã tham gia làm bài, xếp hạng theo thời gian nộp bài.</p>
+      </div>
 
-        <div class="mb-8">
-            <h1 class="text-3xl font-black text-slate-800 tracking-tight">📊 Kết Quả Phòng Thi</h1>
-            <p class="text-slate-500 text-sm mt-1">Danh sách học viên đã tham gia làm bài, xếp hạng theo thời gian nộp bài</p>
+      <div class="slip" style="padding: 0;">
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tên học viên</th>
+                <th style="text-align: center;">Số câu đúng</th>
+                <th style="text-align: center;">Điểm số (Thang 10)</th>
+                <th>Thời gian nộp bài</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr id="tableLoading">
+                <td colspan="4" style="text-align: center; padding: 56px 20px; color: var(--ink-faint);">
+                  Đang tải danh sách điểm từ hệ thống...
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-100/80 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-500">
-                            <th class="py-4 px-6">Tên học viên</th>
-                            <th class="py-4 px-6 text-center">Số câu đúng</th>
-                            <th class="py-4 px-6 text-center">Điểm số (Thang 10)</th>
-                            <th class="py-4 px-6">Thời gian nộp bài</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-100 text-sm font-medium text-slate-700">
-                        <tr id="tableLoading">
-                            <td colspan="4" class="text-center py-12 text-slate-400 font-medium bg-white">
-                                ⏳ Đang tải danh sách điểm từ hệ thống...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+      </div>
     </div>
 
 <script>
@@ -48,14 +52,12 @@ async function loadResults() {
     const quizId = localStorage.getItem("selectedQuizId");
     const token = localStorage.getItem("token");
 
-    // Nếu thiếu thông tin xác thực, trả về trang danh sách đề
     if (!quizId || !token) {
         window.location.href = "my-quizzes.html";
         return;
     }
 
     try {
-        // Gọi API đến server Render của bạn
         const res = await fetch(`https://quiz-backend-svt8.onrender.com/api/quiz/results/${quizId}`, {
             headers: { 
                 "Authorization": "Bearer " + token 
@@ -65,25 +67,21 @@ async function loadResults() {
         const data = await res.json();
         const tbody = document.getElementById("tableBody");
         
-        // Xóa dòng thông báo Loading ban đầu đi
         const loadingRow = document.getElementById("tableLoading");
         if(loadingRow) loadingRow.remove();
 
-        // Trường hợp phòng thi chưa có ai làm bài
         if (!data || data.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="4" class="text-center py-12 text-slate-400 font-medium bg-white">
-                        📭 Chưa có ai tham gia phòng thi này để ghi nhận điểm số.
+                    <td colspan="4" style="text-align: center; padding: 56px 20px; color: var(--ink-faint);">
+                        Chưa có ai tham gia phòng thi này để ghi nhận điểm số.
                     </td>
                 </tr>
             `;
             return;
         }
 
-        // Vòng lặp kết quả dữ liệu
         data.forEach((r) => {
-            // Định dạng lại ngày giờ nộp bài thành kiểu Việt Nam (Giờ:Phút - Ngày/Tháng/Năm)
             let formattedTime = "Không rõ";
             if (r.submitted_at) {
                 const dateObj = new Date(r.submitted_at);
@@ -96,30 +94,23 @@ async function loadResults() {
                 });
             }
 
-            // Đổi màu sắc trạng thái điểm (Từ 7.0 điểm trở lên tô màu xanh lá, ngược lại tô màu cam ấm)
             const scoreNum = parseFloat(r.score);
-            const scoreColor = scoreNum >= 7.0 
-                ? "text-emerald-600 bg-emerald-50 border-emerald-200" 
-                : "text-amber-600 bg-amber-50 border-amber-200";
+            const scoreClass = scoreNum >= 7.0 ? "pass" : "fail";
 
             tbody.innerHTML += `
-                <tr class="hover:bg-slate-50/50 transition duration-150">
-                    <td class="py-4 px-6 font-semibold text-slate-800 flex items-center gap-2">
-                        <span class="text-slate-400">👤</span> ${r.display_name}
+                <tr>
+                    <td style="font-weight: 600;">${r.display_name}</td>
+                    
+                    <td style="text-align: center; font-family: var(--font-mono);">
+                        ${r.correct_answers} <span style="color: var(--ink-faint); margin: 0 2px;">/</span> ${r.total_questions}
                     </td>
                     
-                    <td class="py-4 px-6 text-center font-mono font-bold text-slate-600">
-                        ${r.correct_answers} <span class="text-slate-300 mx-0.5">/</span> ${r.total_questions}
+                    <td style="text-align: center;">
+                        <span class="score-chip ${scoreClass}">${scoreNum.toFixed(2)}</span>
                     </td>
                     
-                    <td class="py-4 px-6 text-center">
-                        <span class="inline-block font-mono font-black text-sm px-3 py-1 rounded-xl border ${scoreColor}">
-                            ${scoreNum.toFixed(2)}
-                        </span>
-                    </td>
-                    
-                    <td class="py-4 px-6 text-xs font-semibold text-slate-400 tracking-wide">
-                        📅 ${formattedTime}
+                    <td style="font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-faint);">
+                        ${formattedTime}
                     </td>
                 </tr>
             `;
@@ -128,15 +119,14 @@ async function loadResults() {
         console.error("Lỗi lấy dữ liệu kết quả:", err);
         document.getElementById("tableBody").innerHTML = `
             <tr>
-                <td colspan="4" class="text-center py-8 text-red-500 font-bold bg-white">
-                    ❌ Không thể kết nối với máy chủ Render để tải dữ liệu điểm số!
+                <td colspan="4" style="text-align: center; padding: 40px 20px; color: var(--red); font-weight: 600;">
+                    Không thể kết nối với máy chủ để tải dữ liệu điểm số.
                 </td>
             </tr>
         `;
     }
 }
 
-// Tự động tải dữ liệu ngay khi trình duyệt xử lý xong cấu trúc DOM của trang
 document.addEventListener("DOMContentLoaded", loadResults);
 </script>
 </body>

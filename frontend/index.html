@@ -3,169 +3,103 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hệ thống Trắc nghiệm Trực tuyến - Quiz App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Hệ thống Trắc nghiệm Trực tuyến — Quiz App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="theme.css" />
   </head>
-  <body
-    class="bg-slate-50 font-sans min-h-screen flex flex-col justify-between text-slate-800"
-  >
-    <nav
-      class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm"
-    >
-      <div
-        class="flex items-center gap-2 cursor-pointer"
-        onclick="window.location.reload()"
-      >
-        <span class="text-2xl">⚡</span>
-        <span class="font-black text-xl text-indigo-600 tracking-wider"
-          >QUIZ APP</span
-        >
-      </div>
-      <div class="flex items-center gap-3">
-        <a
-          href="login.html"
-          class="text-sm font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-4 py-2 rounded-xl transition"
-        >
-          Đăng Nhập
+  <body>
+    <nav class="topbar">
+      <div class="topbar-inner">
+        <a href="index.html" class="brand">
+          <span class="brand-mark">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
+          </span>
+          QUIZ APP
         </a>
-        <a
-          href="register.html"
-          class="text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-xl transition shadow-md shadow-indigo-100"
-        >
-          Đăng Ký
-        </a>
+        <div class="topbar-right">
+          <a href="login.html" class="btn btn-ghost">Đăng nhập</a>
+          <a href="register.html" class="btn btn-primary">Đăng ký</a>
+        </div>
       </div>
     </nav>
 
-    <main
-      class="flex-1 max-w-5xl w-full mx-auto px-4 py-12 flex flex-col justify-center"
-    >
-      <div class="text-center mb-12 animate-fade-in">
-        <span
-          class="text-xs font-bold uppercase tracking-widest text-indigo-500 bg-indigo-50 px-3 py-1.5 rounded-full"
-          >Nền tảng kiểm tra trực tuyến thế hệ mới</span
-        >
-        <h1
-          class="text-4xl md:text-5xl font-black text-slate-800 mt-4 tracking-tight leading-tight"
-        >
-          Tạo Đề Thi Trắc Nghiệm <br class="hidden sm:inline" />
-          & Làm Bài Bảo Mật Bằng Mật Khẩu
-        </h1>
-        <p class="text-slate-500 max-w-xl mx-auto mt-4 text-base md:text-lg">
-          Hệ thống chấm điểm tự động theo thang điểm 10, chia đều điểm cho mọi
-          câu hỏi. An toàn, nhanh chóng và hoàn toàn miễn phí.
+    <main>
+      <section class="hero shell">
+        <span class="eyebrow">Nền tảng khảo thí trực tuyến</span>
+        <h1>Soạn đề thi trắc nghiệm,<br />bảo mật bằng mật khẩu phòng.</h1>
+        <p>
+          Hệ thống chấm điểm tự động theo thang điểm 10, chia đều cho mọi câu
+          hỏi. Tạo phòng thi trong một phút, chia sẻ mã đề và theo dõi kết quả
+          theo thời gian thực.
         </p>
-      </div>
+      </section>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div
-          class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 text-center flex flex-col justify-between transition-all hover:shadow-lg hover:-translate-y-1 duration-200"
-        >
-          <div>
-            <div
-              class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-2xl mx-auto mb-4 font-bold"
-            >
-              🛠️
-            </div>
-            <h3 class="text-lg font-bold text-slate-800 mb-2">
-              Tạo Đề Thi Cá Nhân
-            </h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-6">
-              Tự soạn bộ câu hỏi trắc nghiệm, đặt mật khẩu bảo mật riêng và nhận
-              mã phòng thi cấp tốc để chia sẻ.
-            </p>
+      <section class="shell" style="padding-bottom: 80px;">
+        <div class="tile-grid">
+          <div class="tile">
+            <span class="tile-index">01</span>
+            <span class="tile-icon">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+            </span>
+            <h3>Tạo đề thi cá nhân</h3>
+            <p>Tự soạn bộ câu hỏi trắc nghiệm, đặt mật khẩu riêng và nhận mã phòng thi để chia sẻ.</p>
+            <button onclick="requireAuth('create-quiz.html')" class="btn btn-primary btn-block">
+              Bắt đầu tạo đề
+            </button>
           </div>
-          <button
-            onclick="requireAuth('create-quiz.html')"
-            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition shadow-md shadow-indigo-100"
-          >
-            Bắt đầu tạo đề
-          </button>
-        </div>
 
-        <div
-          class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 text-center flex flex-col justify-between transition-all hover:shadow-lg hover:-translate-y-1 duration-200"
-        >
-          <div>
-            <div
-              class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-2xl mx-auto mb-4 font-bold"
-            >
-              ✍️
-            </div>
-            <h3 class="text-lg font-bold text-slate-800 mb-2">
-              Vào Làm Đề Phòng Thi
-            </h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-6">
-              Nhập chính xác mã phòng thi và điền mật khẩu lớp học để bắt đầu
-              làm bài làm thi tính giờ nghiêm túc.
-            </p>
+          <div class="tile">
+            <span class="tile-index">02</span>
+            <span class="tile-icon">
+              <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1" /><path d="M3 9h18" /><path d="M8 4v5" /></svg>
+            </span>
+            <h3>Vào làm đề phòng thi</h3>
+            <p>Nhập mã phòng thi và mật khẩu được chia sẻ để bắt đầu làm bài có tính giờ.</p>
+            <button onclick="requireAuth('enter-quiz.html')" class="btn btn-secondary btn-block">
+              Vào phòng thi
+            </button>
           </div>
-          <button
-            onclick="requireAuth('enter-quiz.html')"
-            class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl transition shadow-md shadow-emerald-100"
-          >
-            Vào phòng thi ngay
-          </button>
-        </div>
 
-        <div
-          class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 text-center flex flex-col justify-between transition-all hover:shadow-lg hover:-translate-y-1 duration-200"
-        >
-          <div>
-            <div
-              class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-2xl mx-auto mb-4 font-bold"
-            >
-              📊
-            </div>
-            <h3 class="text-lg font-bold text-slate-800 mb-2">
-              Quản Lý & Xem Điểm
-            </h3>
-            <p class="text-slate-500 text-sm leading-relaxed mb-6">
-              Xem lại lịch sử điểm số của bản thân hoặc theo dõi danh sách, điểm
-              số của những người đã làm đề do bạn tạo.
-            </p>
+          <div class="tile">
+            <span class="tile-index">03</span>
+            <span class="tile-icon">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18" /><path d="M7 16l4-6 4 3 5-7" /></svg>
+            </span>
+            <h3>Quản lý & xem điểm</h3>
+            <p>Theo dõi danh sách đề đã tạo và điểm số của những người đã tham gia làm bài.</p>
+            <button onclick="requireAuth('my-quizzes.html')" class="btn btn-secondary btn-block">
+              Quản lý tài khoản
+            </button>
           </div>
-          <button
-            onclick="requireAuth('my-quizzes.html')"
-            class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl transition shadow-md shadow-amber-100"
-          >
-            Quản lý tài khoản
-          </button>
         </div>
-      </div>
+      </section>
     </main>
 
-    <footer
-      class="bg-white border-t border-slate-200 py-6 text-center text-sm text-slate-400"
-    >
-      &copy; 2026 Hệ thống Quiz Trắc Nghiệm. Phát triển nhằm mục đích tối ưu hóa
-      thi cử.
+    <footer class="site-footer">
+      © 2026 QUIZ APP — Hệ thống thi trắc nghiệm trực tuyến.
     </footer>
 
     <script>
-      // Kiểm tra xem người dùng đã từng đăng nhập chưa khi vừa vào trang chủ
       window.addEventListener("DOMContentLoaded", () => {
         const token = localStorage.getItem("token");
         const user = localStorage.getItem("user");
-
-        // Nếu đã đăng nhập sẵn rồi, chuyển hướng thẳng vào Dashboard thật luôn
         if (token && user) {
           window.location.href = "dashboard.html";
         }
       });
 
-      // Hàm chặn hành động nếu chưa đăng nhập
       function requireAuth(targetPage) {
         const token = localStorage.getItem("token");
-
         if (!token) {
-          // Nếu chưa đăng nhập, hiện thông báo nhắc nhở và đẩy qua trang Login
           alert(
-            "Hệ thống yêu cầu bảo mật: Vui lòng ĐĂNG NHẬP hoặc ĐĂNG KÝ tài khoản trước khi thực hiện tính năng này!",
+            "Hệ thống yêu cầu bảo mật: Vui lòng đăng nhập hoặc đăng ký tài khoản trước khi thực hiện tính năng này.",
           );
           window.location.href = "login.html";
         } else {
-          // Nếu đã đăng nhập thành công, cho phép chuyển sang trang mục tiêu
           window.location.href = targetPage;
         }
       }

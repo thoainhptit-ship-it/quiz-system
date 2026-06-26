@@ -3,48 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Đề đã tạo - Quiz App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Đề đã tạo — Quiz App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="theme.css" />
   </head>
-  <body class="bg-slate-50 font-sans min-h-screen text-slate-800">
-    <div class="max-w-5xl mx-auto px-4 py-8">
-      <div class="mb-6">
-        <a
-          href="dashboard.html"
-          class="text-sm font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1 transition"
-        >
-          <span>←</span> Quay lại Dashboard
-        </a>
-      </div>
+  <body>
+    <div class="shell shell--wide" style="padding-top: 40px; padding-bottom: 60px;">
+      <a href="dashboard.html" class="back-link">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 12H5" /><path d="M12 19l-7-7 7-7" /></svg>
+        Quay lại Dashboard
+      </a>
 
-      <div
-        class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 pb-6 mb-8 gap-4"
-      >
-        <div>
-          <h1 class="text-3xl font-black text-slate-800 tracking-tight">
-            📚 Kho Đề Thi Đã Tạo
-          </h1>
-          <p class="text-slate-500 text-sm mt-1">
-            Quản lý mã phòng thi và xem chi tiết điểm số của học viên làm bài
-          </p>
+      <div class="flex-between" style="border-bottom: 1px solid var(--line); padding-bottom: 28px; margin-bottom: 32px; align-items: flex-end;">
+        <div class="page-head" style="margin-bottom: 0;">
+          <span class="eyebrow">Quản lý</span>
+          <h1>Kho đề thi đã tạo</h1>
+          <p>Quản lý mã phòng thi và xem chi tiết điểm số của học viên làm bài.</p>
         </div>
-        <a
-          href="create-quiz.html"
-          class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 px-5 rounded-xl transition shadow-md shadow-indigo-100 flex items-center gap-1.5"
-        >
-          <span>➕</span> Soạn đề thi mới
+        <a href="create-quiz.html" class="btn btn-primary" style="flex-shrink: 0;">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 5v14" /><path d="M5 12h14" /></svg>
+          Soạn đề mới
         </a>
       </div>
 
-      <div id="quizList" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div
-          id="loadingState"
-          class="col-span-full text-center py-12 text-slate-400 font-medium"
-        >
-          ⏳ Đang tải danh sách đề thi của bạn...
+      <div id="quizList" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div id="loadingState" class="state-block" style="grid-column: 1 / -1;">
+          Đang tải danh sách đề thi của bạn...
         </div>
       </div>
     </div>
+
+    <style>
+      @media (max-width: 720px) {
+        #quizList { grid-template-columns: 1fr !important; }
+      }
+    </style>
 
     <script>
       async function loadQuizzes() {
@@ -72,9 +69,10 @@
 
           if (data.length === 0) {
             list.innerHTML = `
-                <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-12 text-center">
-                    <p class="text-slate-400 text-base font-medium">Bạn chưa tạo đề thi nào trên hệ thống.</p>
-                    <a href="create-quiz.html" class="inline-block text-sm font-bold text-indigo-600 hover:underline mt-2">Bấm vào đây để tạo đề thi đầu tiên!</a>
+                <div class="state-block" style="grid-column: 1 / -1; border: 1px solid var(--line); background: var(--paper-raised);">
+                    <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /></svg>
+                    <strong>Bạn chưa tạo đề thi nào</strong>
+                    <a href="create-quiz.html" style="font-weight: 600; color: var(--navy-deep); text-decoration: none;">Bấm vào đây để tạo đề thi đầu tiên →</a>
                 </div>
             `;
             return;
@@ -82,29 +80,27 @@
 
           data.forEach((q) => {
             const quizCardHtml = `
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between transition-all hover:shadow-md duration-200">
+                <div class="quiz-card">
                     <div>
-                        <h3 class="text-xl font-bold text-slate-800 line-clamp-1 mb-2" title="${q.title}">
-                            📝 ${q.title}
-                        </h3>
-                        <p class="text-slate-400 text-xs line-clamp-2 mb-4 h-8">
+                        <h3 title="${q.title}">${q.title}</h3>
+                        <p class="desc">
                             ${q.description || "Không có mô tả chi tiết cho bộ đề thi này."}
                         </p>
-                        
-                        <div class="flex flex-wrap items-center gap-3 mb-6">
-                            <div class="bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
-                                <span class="text-xs font-bold text-indigo-600">MÃ ĐỀ:</span>
-                                <span class="font-mono font-black text-sm text-indigo-700 tracking-wider select-all uppercase" title="Click để bôi đen copy">${q.quiz_code}</span>
+                        <div class="chips">
+                            <div class="code-chip">
+                                <span class="label">Mã đề</span>
+                                <span class="value" title="Click để bôi đen copy">${q.quiz_code}</span>
                             </div>
-                            <div class="bg-slate-100 text-slate-600 px-2.5 py-1.5 rounded-xl text-xs font-semibold">
-                                ⏱️ ${q.time_limit || 0} phút
+                            <div class="meta-chip">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>
+                                ${q.time_limit || 0} phút
                             </div>
                         </div>
                     </div>
 
-                    <button onclick="viewResults(${q.id})" 
-                        class="w-full bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 font-bold py-2.5 px-4 rounded-xl transition text-sm flex items-center justify-center gap-2 border border-transparent hover:border-indigo-200">
-                        <span>📊</span> Xem danh sách điểm số
+                    <button onclick="viewResults(${q.id})" class="btn btn-secondary btn-block">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 3v18h18" /><path d="M7 16l4-6 4 3 5-7" /></svg>
+                        Xem danh sách điểm số
                     </button>
                 </div>
             `;
@@ -113,7 +109,7 @@
         } catch (err) {
           console.error(err);
           document.getElementById("quizList").innerHTML =
-            `<div class="col-span-full text-center text-red-500 font-bold">Lỗi kết nối máy chủ không thể tải dữ liệu!</div>`;
+            `<div class="state-block error" style="grid-column: 1 / -1;">Lỗi kết nối máy chủ, không thể tải dữ liệu!</div>`;
         }
       }
 
@@ -122,7 +118,6 @@
         window.location.href = "creator-results.html";
       }
 
-      // Tự động kích hoạt khi trang web load xong
       document.addEventListener("DOMContentLoaded", loadQuizzes);
     </script>
   </body>

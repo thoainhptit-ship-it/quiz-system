@@ -3,41 +3,36 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Phòng thi trực tuyến</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Phòng thi trực tuyến — Quiz App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="theme.css" />
   </head>
-  <body class="bg-slate-50 font-sans min-h-screen text-slate-800 pb-12">
-    <div
-      class="sticky top-0 bg-white border-b border-slate-200 z-50 px-6 py-4 shadow-sm flex justify-between items-center"
-    >
-      <div>
-        <h1 id="quiz_title" class="font-bold text-lg text-slate-800">
-          Đang tải đề thi...
-        </h1>
-        <p id="quiz_desc" class="text-xs text-slate-400"></p>
-      </div>
-      <div
-        class="bg-amber-50 border border-amber-200 px-4 py-2 rounded-xl text-center"
-      >
-        <span
-          class="block text-[10px] uppercase font-bold text-amber-600 tracking-wider"
-          >Thời gian còn lại</span
-        >
-        <span id="timer" class="font-mono text-lg font-black text-amber-700"
-          >00:00</span
-        >
+  <body style="padding-bottom: 48px;">
+    <div class="topbar" style="position: sticky; top: 0; z-index: 50;">
+      <div class="topbar-inner" style="max-width: 760px;">
+        <div>
+          <h1 id="quiz_title" style="font-family: var(--font-display); font-size: 17px; font-weight: 600; margin: 0; color: var(--ink);">
+            Đang tải đề thi...
+          </h1>
+          <p id="quiz_desc" style="font-size: 12px; color: var(--ink-faint); margin: 2px 0 0 0;"></p>
+        </div>
+        <div class="timer-box">
+          <span class="timer-label">Thời gian còn lại</span>
+          <span id="timer" class="timer-value">00:00</span>
+        </div>
       </div>
     </div>
 
-    <div class="max-w-3xl mx-auto px-4 mt-6">
-      <div id="quizContainer" class="space-y-6"></div>
+    <div class="shell" style="max-width: 760px; margin-top: 28px;">
+      <div id="quizContainer" style="display: flex; flex-direction: column; gap: 20px;"></div>
 
-      <div class="mt-8 text-center" id="actionArea">
-        <button
-          onclick="submitAnswers()"
-          class="px-12 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl transition shadow-lg shadow-indigo-100"
-        >
-          Nộp Bài Lên Hệ Thống
+      <div style="margin-top: 32px; text-align: center;" id="actionArea">
+        <button onclick="submitAnswers()" class="btn btn-primary" style="padding: 14px 48px;">
+          Nộp bài lên hệ thống
         </button>
       </div>
     </div>
@@ -54,36 +49,38 @@
       }
 
       function initQuiz() {
-        document.getElementById("quiz_title").innerText =
-          "✍️ " + quizData.title;
+        document.getElementById("quiz_title").innerText = quizData.title;
         document.getElementById("quiz_desc").innerText =
           quizData.description ||
           "Hãy đọc kỹ câu hỏi trước khi chọn phương án.";
 
-        // Render câu hỏi công khai bảo mật (không lộ đáp án đúng)
         const container = document.getElementById("quizContainer");
         quizData.questions.forEach((q, idx) => {
           const qHtml = `
-            <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm question-card" data-qid="${q.id}">
-                <h3 class="font-bold text-slate-800 mb-3">Câu ${idx + 1}: ${q.question}</h3>
-                <div class="space-y-2">
-                    ${q.options
-                      .map(
-                        (opt) => `
-                        <label class="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-100 transition">
-                            <input type="radio" name="q_${q.id}" value="${opt.id}" class="w-4 h-4 text-indigo-600">
-                            <span class="text-sm font-medium text-slate-700">${opt.option_text}</span>
-                        </label>
-                    `,
-                      )
-                      .join("")}
+            <div class="q-slip question-card" data-qid="${q.id}">
+                <div class="q-slip-head">
+                  <span class="q-number">Câu ${String(idx + 1).padStart(2, "0")}</span>
+                </div>
+                <div class="q-slip-body">
+                  <h3 style="font-size: 15px; font-weight: 600; color: var(--ink); margin: 0 0 14px 0; line-height: 1.5;">${q.question}</h3>
+                  <div>
+                      ${q.options
+                        .map(
+                          (opt) => `
+                          <label class="answer-label">
+                              <input type="radio" name="q_${q.id}" value="${opt.id}">
+                              <span>${opt.option_text}</span>
+                          </label>
+                      `,
+                        )
+                        .join("")}
+                  </div>
                 </div>
             </div>
         `;
           container.insertAdjacentHTML("beforeend", qHtml);
         });
 
-        // Kích hoạt bộ đếm ngược thời gian
         let totalSeconds = quizData.time_limit * 60;
         const timerDisplay = document.getElementById("timer");
 
@@ -91,6 +88,9 @@
           let mins = Math.floor(totalSeconds / 60);
           let secs = totalSeconds % 60;
           timerDisplay.innerText = `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
+          if (totalSeconds <= 60) {
+            timerDisplay.classList.add("is-urgent");
+          }
 
           if (totalSeconds <= 0) {
             clearInterval(countdownInterval);
@@ -136,24 +136,21 @@
       }
 
       function showResults(resData) {
-        // Ẩn nút nộp bài, cuộn lên đầu trang
         document.getElementById("actionArea").innerHTML =
-          `<a href="dashboard.html" class="inline-block px-8 py-3 bg-slate-600 text-white font-bold rounded-xl">Quay về Dashboard</a>`;
+          `<a href="dashboard.html" class="btn btn-secondary" style="padding: 13px 40px;">Quay về Dashboard</a>`;
         window.scrollTo({ top: 0, behavior: "smooth" });
 
-        // Hiển thị hộp điểm số cực đẹp ở đầu
         const headerScoreHtml = `
-        <div class="bg-indigo-600 text-white rounded-2xl p-6 text-center shadow-xl mb-6">
-            <h2 class="text-lg font-bold uppercase tracking-wider opacity-80">Kết quả bài làm</h2>
-            <div class="text-5xl font-black my-2">${resData.score} <span class="text-xl opacity-70">/ 10 điểm</span></div>
-            <p class="text-sm">Bạn đã làm chính xác ${resData.correct} trên tổng số ${resData.total} câu hỏi.</p>
+        <div class="slip slip--stamped" style="text-align: center; padding: 28px 24px; background: var(--navy-deep); border-color: var(--navy-deep);">
+            <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.65);">Kết quả bài làm</span>
+            <div style="font-family: var(--font-display); font-size: 48px; font-weight: 600; color: #fff; margin: 6px 0;">${resData.score}<span style="font-size: 18px; font-weight: 500; opacity: 0.7;"> / 10 điểm</span></div>
+            <p style="font-size: 13.5px; color: rgba(255,255,255,0.85); margin: 0;">Bạn đã làm chính xác ${resData.correct} trên tổng số ${resData.total} câu hỏi.</p>
         </div>
     `;
         document
           .getElementById("quizContainer")
           .insertAdjacentHTML("afterbegin", headerScoreHtml);
 
-        // Vô hiệu hóa toàn bộ ô chọn & Đánh dấu màu câu Đúng / Sai
         const inputs = document.querySelectorAll('input[type="radio"]');
         inputs.forEach((i) => (i.disabled = true));
 
@@ -163,22 +160,23 @@
           );
           if (card) {
             if (rev.isCorrect) {
-              card.classList.add("border-emerald-500", "bg-emerald-50/20");
+              card.classList.add("border-correct");
             } else {
-              card.classList.add("border-red-500", "bg-red-50/20");
+              card.classList.add("border-wrong");
             }
-            // Tô xanh đáp án đúng của câu hỏi đó để người dùng nhận biết học lại
             const correctInput = card.querySelector(
               `input[value="${rev.correct_option_id}"]`,
             );
             if (correctInput) {
-              correctInput
-                .closest("label")
-                .classList.add(
-                  "bg-emerald-100",
-                  "border-emerald-400",
-                  "text-emerald-900",
-                );
+              correctInput.closest("label").classList.add("is-correct");
+            }
+            if (!rev.isCorrect && rev.selected_option_id) {
+              const selectedInput = card.querySelector(
+                `input[value="${rev.selected_option_id}"]`,
+              );
+              if (selectedInput) {
+                selectedInput.closest("label").classList.add("is-wrong");
+              }
             }
           }
         });

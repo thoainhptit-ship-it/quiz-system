@@ -1,117 +1,85 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="vi">
 <head>
-
-<title>Kết quả</title>
-
-<style>
-
-.correct{
-    background:lightgreen;
-}
-
-.wrong{
-    background:#ffb3b3;
-}
-
-</style>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kết quả — Quiz App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="theme.css" />
 </head>
 
-<body>
+<body style="padding-bottom: 48px;">
 
-<h1>Kết quả bài thi</h1>
+<div class="shell" style="max-width: 760px; padding-top: 40px;">
 
-<h2 id="score"></h2>
+  <div id="scoreHeader" class="slip slip--stamped" style="text-align: center; padding: 32px 24px; background: var(--navy-deep); border-color: var(--navy-deep); margin-bottom: 28px;">
+    <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.65);">Kết quả bài thi</span>
+    <h1 id="score" style="font-family: var(--font-display); font-size: 40px; font-weight: 600; color: #fff; margin: 6px 0 0 0;"></h1>
+  </div>
 
-<div id="reviewContainer"></div>
+  <div id="reviewContainer" style="display: flex; flex-direction: column; gap: 18px;"></div>
+
+</div>
 
 <script>
 
-const result =
-    JSON.parse(
-        localStorage.getItem(
-            "quizResult"
-        )
+const result = JSON.parse(localStorage.getItem("quizResult"));
+const quiz = JSON.parse(localStorage.getItem("quizData"));
+
+document.getElementById("score").innerText =
+    `Đúng ${result.correct}/${result.total} — Điểm ${result.score}`;
+
+const container = document.getElementById("reviewContainer");
+
+quiz.questions.forEach((q, index) => {
+
+    const review = result.reviewData.find(
+        r => r.question_id == q.id
     );
-
-const quiz =
-    JSON.parse(
-        localStorage.getItem(
-            "quizData"
-        )
-    );
-
-document.getElementById("score")
-.innerText =
-
-`Đúng ${result.correct}/${result.total}
-- Điểm ${result.score}`;
-
-const container =
-    document.getElementById(
-        "reviewContainer"
-    );
-
-quiz.questions.forEach((q,index)=>{
-
-    const review =
-        result.reviewData.find(
-            r => r.question_id == q.id
-        );
 
     let html = `
-
-        <div>
-
-            <h3>
-                Câu ${index+1}:
+        <div class="q-slip">
+            <div class="q-slip-head">
+              <span class="q-number">Câu ${String(index + 1).padStart(2, "0")}</span>
+            </div>
+            <div class="q-slip-body">
+              <h3 style="font-size: 15px; font-weight: 600; color: var(--ink); margin: 0 0 14px 0; line-height: 1.5;">
                 ${q.question}
-            </h3>
-
+              </h3>
+              <div>
     `;
 
-    q.options.forEach((opt)=>{
+    q.options.forEach((opt) => {
 
-        let className = "";
+        let className = "answer-label";
 
-        if(
-            opt.id ==
-            review.correct_option_id
-        ){
-            className = "correct";
+        if (opt.id == review.correct_option_id) {
+            className += " is-correct";
         }
 
-        if(
-            opt.id ==
-            review.selected_option_id &&
-            !review.isCorrect
-        ){
-            className = "wrong";
+        if (opt.id == review.selected_option_id && !review.isCorrect) {
+            className += " is-wrong";
         }
 
         html += `
-
             <div class="${className}">
-                ${opt.option_text}
+                <span>${opt.option_text}</span>
             </div>
-
         `;
 
     });
 
-    html += "</div><hr>";
+    html += "</div></div></div>";
 
-    container.insertAdjacentHTML(
-        "beforeend",
-        html
-    );
+    container.insertAdjacentHTML("beforeend", html);
 
 });
 
 </script>
 
 </body>
-
 </html>

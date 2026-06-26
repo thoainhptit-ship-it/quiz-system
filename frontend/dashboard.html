@@ -3,92 +3,69 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hệ thống Quiz - Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dashboard — Quiz App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="theme.css" />
   </head>
-  <body class="bg-slate-50 font-sans min-h-screen">
-    <nav
-      class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm"
-    >
-      <div class="flex items-center gap-2">
-        <span class="text-2xl">⚡</span>
-        <span class="font-black text-xl text-indigo-600 tracking-wider"
-          >QUIZ APP</span
-        >
-      </div>
-      <div class="flex items-center gap-4">
-        <span id="welcome_name" class="font-semibold text-slate-700"
-          >Xin chào</span
-        >
-        <button
-          onclick="logout()"
-          class="text-sm font-bold text-red-500 hover:text-red-600 bg-red-50 px-3 py-1.5 rounded-xl transition"
-        >
-          Đăng xuất
-        </button>
+  <body>
+    <nav class="topbar">
+      <div class="topbar-inner">
+        <a href="dashboard.html" class="brand">
+          <span class="brand-mark">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
+          </span>
+          QUIZ APP
+        </a>
+        <div class="topbar-right">
+          <span id="welcome_name" class="topbar-user">—</span>
+          <button onclick="logout()" class="btn btn-danger-ghost">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>
+            Đăng xuất
+          </button>
+        </div>
       </div>
     </nav>
 
-    <div class="max-w-4xl mx-auto px-4 py-12">
-      <div class="text-center mb-10">
-        <h2 class="text-3xl font-black text-slate-800">
-          Bạn muốn làm gì hôm nay?
-        </h2>
-        <p class="text-slate-500 mt-2">
-          Chọn một trong hai tác vụ chính bên dưới để bắt đầu
-        </p>
+    <div class="shell" style="padding-top: 48px; padding-bottom: 64px;">
+      <div class="page-head" style="text-align: center; margin: 0 auto 40px; max-width: 480px;">
+        <span class="eyebrow" style="justify-content: center;">Trung tâm điều khiển</span>
+        <h1>Bạn muốn làm gì hôm nay?</h1>
+        <p style="margin: 0 auto;">Chọn một tác vụ bên dưới để bắt đầu.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div
-          class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center transition-all hover:shadow-md hover:border-indigo-300"
-        >
-          <div class="text-4xl mb-4">🛠️</div>
-          <h3 class="text-xl font-bold text-slate-800 mb-2">Tạo Đề Thi Mới</h3>
-          <p class="text-slate-500 text-sm mb-6">
-            Soạn bộ câu hỏi, cấu hình mật khẩu cá nhân và xuất bản mã đề thi.
-          </p>
-          <a
-            href="create-quiz.html"
-            class="inline-block w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition"
-            >Bắt đầu tạo đề</a
-          >
+      <div class="tile-grid">
+        <div class="tile">
+          <span class="tile-index">01</span>
+          <span class="tile-icon">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+          </span>
+          <h3>Tạo đề thi mới</h3>
+          <p>Soạn bộ câu hỏi, cấu hình mật khẩu riêng và xuất bản mã đề thi.</p>
+          <a href="create-quiz.html" class="btn btn-primary btn-block">Bắt đầu tạo đề</a>
         </div>
 
-        <div
-          class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center transition-all hover:shadow-md hover:border-emerald-300"
-        >
-          <div class="text-4xl mb-4">✍️</div>
-          <h3 class="text-xl font-bold text-slate-800 mb-2">
-            Vào Làm Đề Người Khác
-          </h3>
-          <p class="text-slate-500 text-sm mb-6">
-            Nhập chính xác mã đề thi và mật khẩu phòng thi được chia sẻ để làm
-            bài.
-          </p>
-          <a
-            href="enter-quiz.html"
-            class="inline-block w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition"
-            >Vào phòng thi</a
-          >
+        <div class="tile">
+          <span class="tile-index">02</span>
+          <span class="tile-icon">
+            <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1" /><path d="M3 9h18" /><path d="M8 4v5" /></svg>
+          </span>
+          <h3>Vào làm đề người khác</h3>
+          <p>Nhập đúng mã đề và mật khẩu phòng thi được chia sẻ để làm bài.</p>
+          <a href="enter-quiz.html" class="btn btn-secondary btn-block">Vào phòng thi</a>
         </div>
 
-        <div
-          class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center transition-all hover:shadow-md hover:border-amber-300"
-        >
-          <div class="text-4xl mb-4">📊</div>
-          <h3 class="text-xl font-bold text-slate-800 mb-2">
-            Quản Lý & Xem Điểm
-          </h3>
-          <p class="text-slate-500 text-sm mb-6">
-            Theo dõi danh sách các đề bạn đã tạo và xem kết quả của những người
-            đã tham gia thi.
-          </p>
-          <a
-            href="my-quizzes.html"
-            class="inline-block w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-xl transition"
-            >Xem danh sách đề</a
-          >
+        <div class="tile">
+          <span class="tile-index">03</span>
+          <span class="tile-icon">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18" /><path d="M7 16l4-6 4 3 5-7" /></svg>
+          </span>
+          <h3>Quản lý & xem điểm</h3>
+          <p>Theo dõi danh sách đề bạn đã tạo và điểm số của người tham gia.</p>
+          <a href="my-quizzes.html" class="btn btn-secondary btn-block">Xem danh sách đề</a>
         </div>
       </div>
     </div>
